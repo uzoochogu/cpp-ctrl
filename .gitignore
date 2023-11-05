@@ -50,3 +50,6 @@ _deps
 ### Visual Studio ###
 *.vcxproj*
 *.sln
+
+
+.gitignore
