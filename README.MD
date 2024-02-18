@@ -16,8 +16,23 @@ If a topic already exists on what you want to talk about, don’t be discouraged
 
 ## Tools Required
 * C++20 compatible compiler
-* CMake
+* `CMake`
 * Clang tools - `clang-tidy` and `clang-format`
+* `vcpkg`
+
+## Dependency management
+`vcpkg` is used for dependency management. Some sections use external libraries pulled in from their repositaries. You can comment out these sections in the TopLevel [`CMakelist.txt file`](/CMakeLists.txt). If you want to build these sections you would need to install the libraries specified in their `vcpkg.json` file. To do this, you can run:
+```shell
+# run this in any folder that vcpkg.json is in.
+# triplet is optional, but useful on windows
+path_to_vcpkg install --triplet triplet_name
+```
+Dependency management will be covered in a future section to further address this. Note you can also use Conan or any robust package manager or even `CMake` itself. Sections may have a markdown document detailing some dependencies for the section. 
+### Some useful vcpkg links
+* [`vcpkg` getting started](https://vcpkg.io/en/getting-started)
+* [`Cpp Weekly vcpkg guide`](https://www.youtube.com/watch?v=KOeOLOu6nHw)
+* [`Microsoft Developer long form video on vcpkg`](https://www.youtube.com/watch?v=3vXOKkv3ND0)
+* [`Gamefromscratch - using vcpkg`](https://www.youtube.com/watch?v=iZeK3Ie5Fz0)
 
 ### Building Project
 ```cmd
