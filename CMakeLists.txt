@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # list of modules
+# Remove directories of sections you don't want to build.
 set(module_dirs "1-callables-and-callbacks"
                 "2-parsers-and-parser-generators")
 
