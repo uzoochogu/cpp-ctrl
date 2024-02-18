@@ -188,13 +188,13 @@ This program will prompt the user for a string to be parsed and it returns a num
 Current Limitations:
 * No support for decimal and scientific notation.
 * No support for month space year pattern.
-`Link to code`: [`value_ctpg`](.\src\value_ctpg.cpp)
+`Link to code`: [`value_ctpg`](./src/value_ctpg.cpp)
 
 
 ## `Boost Spirit (X3) Implementation`
 We also used an action based approach here. This is not ideal, you can create a proper AST which you can fetch data from. We would compare their performance too.
 
-`Link to Actions-based code`: [`value_spirit`](.\src\value_spirit.cpp)
+`Link to Actions-based code`: [`value_spirit`](./src/value_spirit.cpp)
 
 
 
