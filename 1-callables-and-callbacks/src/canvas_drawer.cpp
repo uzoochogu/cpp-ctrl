@@ -1,6 +1,7 @@
 /*
  * A very contrived program showing how a functor can be used as a callable.
  */
+#include <cmath>
 #include <concepts>
 #include <cstdint>
 #include <iostream>
@@ -88,6 +89,7 @@ enum class Shape : std::uint8_t {
     KITE = 0x07,
     LINE = 0x08,
     POINT = 0x09,
+    CIRCLE_V2 = 0x10
 };
 
 template <typename C>
@@ -114,22 +116,22 @@ class myDrawer {
     // overloaded call operator
     std::shared_ptr<Canvas> operator()(Shape sp) {
         std::cout << "Drawing on Canvas:\n";
-        std::size_t can_width{sheet->get_width()},
-            can_height{sheet->get_height()};
+        std::size_t canvas_width{sheet->get_width()},
+            canvas_height{sheet->get_height()};
         // Type Checks
         switch (sp) {
             case Shape::SQUARE:
                 // Draw a square on the extreme dimensions of canvas
                 // Calculate the coordinates for all the extreme points
                 // draw along the top and bottom widths
-                for (std::size_t i{0}; i < can_width; i++) {
+                for (std::size_t i{0}; i < canvas_width; i++) {
                     sheet->set_coord(0, i, 1);
-                    sheet->set_coord(can_height - 1, i, 1);
+                    sheet->set_coord(canvas_height - 1, i, 1);
                 }
                 // draw along the left and right height
-                for (std::size_t i{0}; i < can_height; i++) {
+                for (std::size_t i{0}; i < canvas_height; i++) {
                     sheet->set_coord(i, 0, 1);
-                    sheet->set_coord(i, can_width - 1, 1);
+                    sheet->set_coord(i, canvas_width - 1, 1);
                 }
                 break;
             // NOLINTBEGIN
@@ -138,9 +140,28 @@ class myDrawer {
                 // Add your code here
                 break;
             case Shape::CIRCLE:
-                // Centre a circle within the canvas
-                // Add your code here
-                break;
+                // Circle inscribed within a canvas
+                {
+                    // Center of the canvas
+                    int mid_x = canvas_width / 2;
+                    int mid_y = canvas_height / 2;
+                    int radius = std::min(mid_x, mid_y);
+                    int diameter = 2 * radius;
+
+                    for (int i = 0; i <= diameter; ++i) {
+                        for (int j = 0; j <= diameter; ++j) {
+                            // Calculate the distance from the center
+                            int distance = std::round(
+                                std::sqrt((i - radius) * (i - radius) +
+                                          (j - radius) * (j - radius)));
+
+                            if (distance == radius - 1) {
+                                sheet->set_coord(i, j, 1);
+                            }
+                        }
+                    }
+                    break;
+                }
             case Shape::TRAPEZIUM:
                 // Centre a trapezium within the canvas
                 // Add your code here
@@ -164,8 +185,57 @@ class myDrawer {
             // NOLINTEND
             case Shape::POINT:
                 // Centre a point within the canvas
-                sheet->set_coord(sheet->get_width() / 2,
-                                 sheet->get_height() / 2, 1);
+                sheet->set_coord(canvas_width / 2, canvas_height / 2, 1);
+
+            case Shape::CIRCLE_V2:
+                // Alternate algo for a circle inscribed in a canvas
+                {
+                    // Center of the canvas
+                    int mid_x = canvas_width / 2;
+                    int mid_y = canvas_height / 2;
+
+                    int x_cursor = std::min(mid_x, mid_y);
+                    int y_cursor = 0;
+                    int axis = 0;
+                    while (x_cursor >= y_cursor) {
+                        // programmatic approach
+                        /* bool flip = false;
+                        int sign = -1;
+                        for (int i = 0; i < 4; i++) {
+                            // flip sign every 2 iterations
+                            if ((i) % 2 == 0) sign *= -1;
+                            sheet->set_coord(mid_y + sign * y,
+                                             mid_x + std::pow(-1, i) * x, 1);
+
+                        }
+                        for (int i = 0; i < 4; i++) {
+                            if ((i) % 2 == 0) sign *= -1;
+                            sheet->set_coord(mid_x + sign * x,
+                                             mid_y + std::pow(-1, i) * y, 1);
+
+                        } */
+                        // set_coord is bounds checked
+                        sheet->set_coord(mid_y + y_cursor, mid_x + x_cursor, 1);
+                        sheet->set_coord(mid_y + y_cursor, mid_x - x_cursor, 1);
+                        sheet->set_coord(mid_y - y_cursor, mid_x + x_cursor, 1);
+                        sheet->set_coord(mid_y - y_cursor, mid_x - x_cursor, 1);
+                        sheet->set_coord(mid_y + x_cursor, mid_x + y_cursor, 1);
+                        sheet->set_coord(mid_y + x_cursor, mid_x - y_cursor, 1);
+                        sheet->set_coord(mid_y - x_cursor, mid_x + y_cursor, 1);
+                        sheet->set_coord(mid_y - x_cursor, mid_x - y_cursor, 1);
+
+                        if (axis <= 0) {
+                            y_cursor += 1;
+                            axis += 2 * y_cursor + 1;
+                        }
+
+                        if (axis > 0) {
+                            x_cursor -= 1;
+                            axis -= 2 * x_cursor + 1;
+                        }
+                    }
+                    break;
+                }
         }
         std::cout << "Drew on Canvas\n";
         return draw();
@@ -244,6 +314,8 @@ int main() {
     // Pass functor as a callable
     std::cout << "Call to Higher order function, passed Drawer callable\n";
     canvas_mask_painter(draw_for_me, Shape::POINT, 42);
+
+    canvas_mask_painter(draw_for_me, Shape::CIRCLE_V2, 42);
 
     // canvasPtr = draw_for_me.transferCanvas();   //can be used to return
     // ownership
