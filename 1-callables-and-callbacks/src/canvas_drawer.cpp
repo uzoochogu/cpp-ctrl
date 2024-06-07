@@ -315,7 +315,7 @@ int main() {
     std::cout << "Call to Higher order function, passed Drawer callable\n";
     canvas_mask_painter(draw_for_me, Shape::POINT, 42);
 
-    canvas_mask_painter(draw_for_me, Shape::CIRCLE_V2, 42);
+    canvas_mask_painter(draw_for_me, Shape::CIRCLE, 42);
 
     // canvasPtr = draw_for_me.transferCanvas();   //can be used to return
     // ownership
